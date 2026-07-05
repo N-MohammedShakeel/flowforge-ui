@@ -66,7 +66,7 @@ const Sidebar = () => {
       {/* Logo */}
       <div className="p-5 border-b border-gray-100">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm shadow-indigo-500/25">
             <svg
               className="w-5 h-5 text-white"
               fill="none"
@@ -103,7 +103,7 @@ const Sidebar = () => {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 transition-all text-sm font-medium ${
+              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 transition-all duration-150 text-sm font-medium ${
                 isActive
                   ? "bg-indigo-50 text-indigo-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -125,7 +125,7 @@ const Sidebar = () => {
       <div className="p-3 border-t border-gray-100">
         {/* User Info */}
         <div className="px-3 py-3 mb-1 rounded-xl bg-gray-50 flex items-center gap-3">
-          <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
             <span className="text-white text-xs font-bold">{initials}</span>
           </div>
           <div className="flex-1 min-w-0">

@@ -78,7 +78,7 @@ function ActionButton({ children, title, onClick }) {
         e.stopPropagation();
         onClick && onClick();
       }}
-      className="rounded-lg bg-white p-1.5 shadow hover:bg-gray-100 transition"
+      className="rounded-lg bg-white p-1.5 shadow-md border border-gray-100 hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all"
     >
       {children}
     </button>
@@ -119,10 +119,10 @@ function CustomNode({ id, data, selected }) {
       <div
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        className={`relative w-72 rounded-2xl border-2 ${style.border} ${style.bg} shadow-md transition-all duration-300 hover:shadow-xl ${selected ? "ring-4 ring-indigo-200" : ""}`}
+        className={`relative w-72 rounded-2xl border-2 ${style.border} ${style.bg} shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${selected ? "ring-4 ring-indigo-200 shadow-lg" : ""}`}
       >
         {hover && (
-          <div className="absolute -top-4 right-2 flex gap-1">
+          <div className="absolute -top-4 right-2 flex gap-1 animate-in fade-in zoom-in-95 duration-150">
             <ActionButton title="Edit">
               <PencilSquareIcon className="h-4 w-4 text-gray-700" />
             </ActionButton>
@@ -148,7 +148,7 @@ function CustomNode({ id, data, selected }) {
             </div>
           </div>
           <div
-            className={`h-3 w-3 rounded-full ${statusColor[data.status || "healthy"]}`}
+            className={`h-3 w-3 rounded-full ${statusColor[data.status || "healthy"]} ring-4 ring-white/60`}
             title={data.status || "healthy"}
           />
         </div>
@@ -175,14 +175,14 @@ function CustomNode({ id, data, selected }) {
           ))}
         </div>
 
-        <div className="flex items-center justify-between rounded-b-2xl border-t border-gray-200 bg-white px-4 py-2 text-xs text-gray-500">
+        <div className="flex items-center justify-between rounded-b-2xl border-t border-gray-200 bg-white/80 px-4 py-2 text-xs text-gray-500">
           <div className="flex items-center gap-2">
             <span className={`h-2 w-2 rounded-full ${style.dot}`} />
             {data.version || "v1.0"}
           </div>
           {data.aiGenerated && (
-            <span className="rounded-full bg-indigo-100 px-2 py-1 text-indigo-700">
-              AI Generated
+            <span className="flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-1 text-indigo-700">
+              ✨ AI Generated
             </span>
           )}
         </div>

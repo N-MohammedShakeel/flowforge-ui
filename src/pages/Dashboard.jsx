@@ -144,7 +144,11 @@ const Dashboard = () => {
         <div className="max-w-3xl mx-auto p-8 pt-12">
           {/* Header */}
           <div className="mb-10">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+              New Architecture
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1.5 tracking-tight">
               Create New Architecture
             </h1>
             <p className="text-gray-500 text-sm">
@@ -154,7 +158,7 @@ const Dashboard = () => {
           </div>
 
           {/* Main Card */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-8">
             {/* Project Name */}
             <div className="mb-6">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -168,7 +172,7 @@ const Dashboard = () => {
                   setError("");
                 }}
                 placeholder="e.g. Bus Ticket Booking System"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition text-sm"
               />
             </div>
 
@@ -185,10 +189,10 @@ const Dashboard = () => {
                       setActiveTab(tab.id);
                       setError("");
                     }}
-                    className={`flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-lg text-xs font-medium transition-all ${
+                    className={`flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-lg text-xs font-medium transition-all duration-150 ${
                       activeTab === tab.id
-                        ? "bg-white shadow-sm text-indigo-700 border border-indigo-100"
-                        : "text-gray-500 hover:text-gray-700"
+                        ? "bg-white shadow-sm text-indigo-700 border border-indigo-100 scale-[1.02]"
+                        : "text-gray-500 hover:text-gray-700 hover:bg-white/60"
                     }`}
                   >
                     <span className="text-xl">{tab.icon}</span>
@@ -214,7 +218,7 @@ const Dashboard = () => {
                     setError("");
                   }}
                   placeholder="Build a bus ticket booking system like RedBus — users can search routes, select seats, and book tickets with online payment..."
-                  className="w-full h-36 p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y text-sm leading-relaxed"
+                  className="w-full h-36 p-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white resize-y text-sm leading-relaxed transition"
                 />
                 <p className="text-xs text-gray-400 mt-1">
                   {description.length} characters
@@ -229,9 +233,11 @@ const Dashboard = () => {
                 </label>
                 <div
                   onClick={() => srsFileRef.current?.click()}
-                  className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/30 transition-all"
+                  className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/30 transition-all group"
                 >
-                  <div className="text-4xl mb-2">📄</div>
+                  <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
+                    📄
+                  </div>
                   <p className="text-sm text-gray-600 font-medium">
                     {srsFileName || "Click to upload PDF"}
                   </p>
@@ -243,7 +249,9 @@ const Dashboard = () => {
                     type="file"
                     accept=".pdf"
                     className="hidden"
-                    onChange={(e) => setSrsFileName(e.target.files[0]?.name || "")}
+                    onChange={(e) =>
+                      setSrsFileName(e.target.files[0]?.name || "")
+                    }
                   />
                 </div>
                 <div className="mt-4">
@@ -254,7 +262,7 @@ const Dashboard = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Any specific requirements or constraints..."
-                    className="w-full h-20 p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none text-sm"
+                    className="w-full h-20 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white resize-none text-sm transition"
                   />
                 </div>
               </div>
@@ -267,9 +275,11 @@ const Dashboard = () => {
                 </label>
                 <div
                   onClick={() => zipFileRef.current?.click()}
-                  className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/30 transition-all"
+                  className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/30 transition-all group"
                 >
-                  <div className="text-4xl mb-2">📁</div>
+                  <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
+                    📁
+                  </div>
                   <p className="text-sm text-gray-600 font-medium">
                     {zipFileName || "Click to upload ZIP"}
                   </p>
@@ -281,7 +291,9 @@ const Dashboard = () => {
                     type="file"
                     accept=".zip"
                     className="hidden"
-                    onChange={(e) => setZipFileName(e.target.files[0]?.name || "")}
+                    onChange={(e) =>
+                      setZipFileName(e.target.files[0]?.name || "")
+                    }
                   />
                 </div>
               </div>
@@ -326,7 +338,7 @@ const Dashboard = () => {
                 id="generate-architecture-btn"
                 onClick={handleGenerate}
                 disabled={isGenerating || !projectName.trim()}
-                className="flex-1 w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center gap-2"
+                className="flex-1 w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md hover:shadow-indigo-500/20 text-sm flex items-center justify-center gap-2 active:scale-[0.99]"
               >
                 {isGenerating ? (
                   <>
@@ -393,7 +405,7 @@ const Dashboard = () => {
                   }
                 }}
                 disabled={isGenerating || !projectName.trim()}
-                className="flex-1 w-full py-3.5 bg-white hover:bg-gray-50 border border-gray-200 disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-700 font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+                className="flex-1 w-full py-3.5 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-700 font-semibold rounded-xl transition-all text-sm flex items-center justify-center gap-2 active:scale-[0.99]"
               >
                 Create Blank Canvas
               </button>

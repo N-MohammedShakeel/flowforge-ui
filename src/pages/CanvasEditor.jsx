@@ -47,22 +47,47 @@ function useToast() {
 
 const ToastContainer = ({ toasts }) => {
   const typeStyles = {
-    success: "bg-green-600",
-    error: "bg-red-600",
-    info: "bg-indigo-600",
-    warning: "bg-amber-500",
+    success: {
+      bar: "bg-emerald-500",
+      icon: "text-emerald-500",
+      symbol: "✓",
+    },
+    error: {
+      bar: "bg-red-500",
+      icon: "text-red-500",
+      symbol: "!",
+    },
+    info: {
+      bar: "bg-indigo-500",
+      icon: "text-indigo-500",
+      symbol: "i",
+    },
+    warning: {
+      bar: "bg-amber-500",
+      icon: "text-amber-500",
+      symbol: "⚠",
+    },
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
-      {toasts.map((t) => (
-        <div
-          key={t.id}
-          className={`${typeStyles[t.type] || typeStyles.info} text-white text-sm px-4 py-3 rounded-xl shadow-lg max-w-xs animate-fade-in pointer-events-auto`}
-        >
-          {t.message}
-        </div>
-      ))}
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none">
+      {toasts.map((t) => {
+        const s = typeStyles[t.type] || typeStyles.info;
+        return (
+          <div
+            key={t.id}
+            className="relative flex items-center gap-3 bg-white text-gray-800 text-sm pl-4 pr-5 py-3.5 rounded-xl shadow-lg shadow-gray-300/40 border border-gray-100 max-w-xs pointer-events-auto animate-in slide-in-from-bottom-2 fade-in duration-200 overflow-hidden"
+          >
+            <span className={`absolute left-0 top-0 h-full w-1 ${s.bar}`} />
+            <span
+              className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold ${s.icon} bg-current/10`}
+            >
+              <span className="text-current">{s.symbol}</span>
+            </span>
+            <span className="font-medium">{t.message}</span>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -76,14 +101,14 @@ const ReviewPanel = ({ review, onClose }) => {
       <div className="flex justify-between text-xs mb-1">
         <span className="text-gray-600 font-medium">{label}</span>
         <span
-          className={`font-bold ${value >= 70 ? "text-green-600" : value >= 50 ? "text-amber-500" : "text-red-600"}`}
+          className={`font-bold ${value >= 70 ? "text-emerald-600" : value >= 50 ? "text-amber-500" : "text-red-600"}`}
         >
           {value}/100
         </span>
       </div>
       <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${value >= 70 ? "bg-green-500" : value >= 50 ? "bg-amber-400" : "bg-red-500"}`}
+          className={`h-full rounded-full transition-all duration-500 ${value >= 70 ? "bg-emerald-500" : value >= 50 ? "bg-amber-400" : "bg-red-500"}`}
           style={{ width: `${value}%` }}
         />
       </div>
@@ -91,9 +116,12 @@ const ReviewPanel = ({ review, onClose }) => {
   );
 
   return (
-    <div className="absolute right-0 top-0 h-full w-80 bg-white border-l border-gray-200 z-30 flex flex-col shadow-xl overflow-y-auto">
-      <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-        <h3 className="font-semibold text-gray-900">Architecture Review</h3>
+    <div className="absolute right-0 top-0 h-full w-80 bg-white/95 backdrop-blur-sm border-l border-gray-200 z-30 flex flex-col shadow-2xl shadow-gray-300/30 overflow-y-auto animate-in slide-in-from-right duration-200">
+      <div className="p-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
+        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+          <span className="text-indigo-500">🔍</span>
+          Architecture Review
+        </h3>
         <button
           onClick={onClose}
           className="p-1 hover:bg-gray-100 rounded-lg transition"
@@ -116,13 +144,15 @@ const ReviewPanel = ({ review, onClose }) => {
 
       <div className="p-4 flex-1">
         {/* Overall Score */}
-        <div className="text-center mb-5 p-4 bg-gray-50 rounded-xl">
+        <div className="text-center mb-5 p-4 bg-gradient-to-br from-gray-50 to-indigo-50/40 rounded-xl border border-gray-100">
           <div
-            className={`text-4xl font-bold mb-1 ${review.overall_score >= 70 ? "text-green-600" : review.overall_score >= 50 ? "text-amber-500" : "text-red-600"}`}
+            className={`text-4xl font-bold mb-1 ${review.overall_score >= 70 ? "text-emerald-600" : review.overall_score >= 50 ? "text-amber-500" : "text-red-600"}`}
           >
             {review.overall_score}
           </div>
-          <div className="text-xs text-gray-500 font-medium">Overall Score</div>
+          <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+            Overall Score
+          </div>
         </div>
 
         {/* Dimension Scores */}
@@ -143,7 +173,7 @@ const ReviewPanel = ({ review, onClose }) => {
               {review.issues.map((issue, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-2 text-xs text-gray-600"
+                  className="flex items-start gap-2 text-xs text-gray-600 bg-red-50/60 border border-red-100 rounded-lg px-2.5 py-2"
                 >
                   <span className="text-red-500 mt-0.5 flex-shrink-0">⚠</span>
                   {issue}
@@ -163,7 +193,7 @@ const ReviewPanel = ({ review, onClose }) => {
               {review.suggestions.map((s, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-2 text-xs text-gray-600"
+                  className="flex items-start gap-2 text-xs text-gray-600 bg-indigo-50/60 border border-indigo-100 rounded-lg px-2.5 py-2"
                 >
                   <span className="text-indigo-500 mt-0.5 flex-shrink-0">
                     →
@@ -341,9 +371,13 @@ function CanvasEditorContent() {
   // ===== Selection Tracking =====
   const onNodesChangeWithTracking = (changes) => {
     onNodesChange(changes);
-    const selectedChange = changes.find((c) => c.type === "select" && c.selected);
-    const unselectedChange = changes.find((c) => c.type === "select" && !c.selected);
-    
+    const selectedChange = changes.find(
+      (c) => c.type === "select" && c.selected,
+    );
+    const unselectedChange = changes.find(
+      (c) => c.type === "select" && !c.selected,
+    );
+
     if (selectedChange) {
       setSelectedElement({ id: selectedChange.id, type: "node" });
     } else if (unselectedChange) {
@@ -353,9 +387,13 @@ function CanvasEditorContent() {
 
   const onEdgesChangeWithTracking = (changes) => {
     onEdgesChange(changes);
-    const selectedChange = changes.find((c) => c.type === "select" && c.selected);
-    const unselectedChange = changes.find((c) => c.type === "select" && !c.selected);
-    
+    const selectedChange = changes.find(
+      (c) => c.type === "select" && c.selected,
+    );
+    const unselectedChange = changes.find(
+      (c) => c.type === "select" && !c.selected,
+    );
+
     if (selectedChange) {
       setSelectedElement({ id: selectedChange.id, type: "edge" });
     } else if (unselectedChange) {
@@ -512,24 +550,24 @@ function CanvasEditorContent() {
   // Loading state
   if (isLoadingCanvas) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/40">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500 text-sm">Loading canvas...</p>
+          <div className="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500 text-sm font-medium">Loading canvas...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 font-sans antialiased flex-col relative">
+    <div className="flex h-screen w-screen overflow-hidden bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 font-sans antialiased flex-col relative">
       {/* Toast Notifications */}
       <ToastContainer toasts={toasts} />
 
       {/* Magical Loading Overlay */}
       {isEnhancing && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="text-center p-8 rounded-2xl bg-white shadow-2xl border border-indigo-100 max-w-sm w-full transform scale-100 animate-in zoom-in-95">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="text-center p-8 rounded-2xl bg-white shadow-2xl shadow-indigo-900/10 border border-indigo-100 max-w-sm w-full transform scale-100 animate-in zoom-in-95">
             <div className="relative w-16 h-16 mx-auto mb-6">
               <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
               <div className="absolute inset-0 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin"></div>

@@ -33,9 +33,9 @@ const ProjectCardSkeleton = () => (
 // ===== Status Badge =====
 const StatusBadge = ({ status }) => {
   const styles = {
-    ACTIVE: "bg-green-100 text-green-700",
-    DRAFT: "bg-amber-100 text-amber-700",
-    PUBLISHED: "bg-blue-100 text-blue-700",
+    ACTIVE: "bg-green-100 text-green-700 ring-1 ring-green-600/10",
+    DRAFT: "bg-amber-100 text-amber-700 ring-1 ring-amber-600/10",
+    PUBLISHED: "bg-blue-100 text-blue-700 ring-1 ring-blue-600/10",
   };
   return (
     <span
@@ -49,7 +49,7 @@ const StatusBadge = ({ status }) => {
 // ===== Empty State =====
 const EmptyState = ({ onNew }) => (
   <div className="col-span-3 flex flex-col items-center justify-center py-24">
-    <div className="w-20 h-20 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
+    <div className="w-20 h-20 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center mb-6">
       <svg
         className="w-10 h-10 text-indigo-400"
         fill="none"
@@ -72,7 +72,7 @@ const EmptyState = ({ onNew }) => (
     </p>
     <button
       onClick={onNew}
-      className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
+      className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md hover:shadow-indigo-500/20 active:scale-[0.98]"
     >
       Create first project
     </button>
@@ -121,7 +121,9 @@ const ProjectList = () => {
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">My Projects</h1>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+                My Projects
+              </h1>
               <p className="text-gray-500 text-sm mt-1">
                 {projects.length} project{projects.length !== 1 ? "s" : ""}{" "}
                 total
@@ -130,7 +132,7 @@ const ProjectList = () => {
             <button
               id="new-project-btn"
               onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md hover:shadow-indigo-500/20 active:scale-[0.98]"
             >
               <svg
                 className="w-4 h-4"
@@ -169,7 +171,7 @@ const ProjectList = () => {
                 <div
                   key={project.id}
                   onClick={() => openCanvas(project)}
-                  className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-md hover:border-indigo-100 transition-all cursor-pointer group relative"
+                  className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:shadow-gray-200/60 hover:border-indigo-100 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group relative"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1 min-w-0 pr-3">
@@ -241,7 +243,7 @@ const ProjectList = () => {
                       <span className="text-indigo-600 font-medium group-hover:text-indigo-700 flex items-center gap-1">
                         Open
                         <svg
-                          className="w-3.5 h-3.5"
+                          className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
