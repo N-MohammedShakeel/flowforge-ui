@@ -1,3 +1,4 @@
+// src/components/canvas/utils/componentLibrary.js
 export const COMPONENT_CATEGORIES = [
   {
     id: "frontend",

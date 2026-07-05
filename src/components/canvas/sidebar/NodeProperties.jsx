@@ -1,17 +1,30 @@
+// src/components/canvas/sidebar/NodeProperties.jsx
 import React from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
-export default function NodeProperties({ selectedNode, setNodes, setEdges }) {
+export default function NodeProperties({
+  selectedNode,
+  setNodes,
+  setEdges,
+  pushToHistory,
+  triggerAutoSave,
+}) {
   if (!selectedNode) return null;
 
   const updateNodeData = (key, value) => {
-    setNodes((nds) =>
-      nds.map((node) =>
+    setNodes((nds) => {
+      const updatedNodes = nds.map((node) =>
         node.id === selectedNode.id
           ? { ...node, data: { ...node.data, [key]: value } }
           : node,
-      ),
-    );
+      );
+      if (triggerAutoSave) triggerAutoSave(updatedNodes);
+      return updatedNodes;
+    });
+  };
+
+  const handleBlur = () => {
+    if (pushToHistory) pushToHistory();
   };
 
   const deleteNode = () => {
@@ -33,6 +46,7 @@ export default function NodeProperties({ selectedNode, setNodes, setEdges }) {
             value={selectedNode.data.icon || "📦"}
             title="Click to edit emoji/icon"
             onChange={(e) => updateNodeData("icon", e.target.value)}
+            onBlur={handleBlur}
             className="text-3xl w-12 h-12 bg-gray-50 border border-gray-200 rounded-xl text-center outline-none focus:border-indigo-500"
           />
           <div className="overflow-hidden">
@@ -53,6 +67,7 @@ export default function NodeProperties({ selectedNode, setNodes, setEdges }) {
             <input
               value={selectedNode.data.label || ""}
               onChange={(e) => updateNodeData("label", e.target.value)}
+              onBlur={handleBlur}
               className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             />
           </div>
@@ -64,6 +79,7 @@ export default function NodeProperties({ selectedNode, setNodes, setEdges }) {
             <input
               value={selectedNode.data.technology || ""}
               onChange={(e) => updateNodeData("technology", e.target.value)}
+              onBlur={handleBlur}
               className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             />
           </div>
@@ -74,7 +90,10 @@ export default function NodeProperties({ selectedNode, setNodes, setEdges }) {
             </label>
             <select
               value={selectedNode.data.category || "custom"}
-              onChange={(e) => updateNodeData("category", e.target.value)}
+              onChange={(e) => {
+                updateNodeData("category", e.target.value);
+                handleBlur();
+              }}
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             >
               <option value="frontend">⚛️ Frontend Layer</option>
@@ -94,7 +113,10 @@ export default function NodeProperties({ selectedNode, setNodes, setEdges }) {
             </label>
             <select
               value={selectedNode.data.status || "healthy"}
-              onChange={(e) => updateNodeData("status", e.target.value)}
+              onChange={(e) => {
+                updateNodeData("status", e.target.value);
+                handleBlur();
+              }}
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             >
               <option value="healthy">🟢 Active / Healthy</option>
@@ -111,6 +133,7 @@ export default function NodeProperties({ selectedNode, setNodes, setEdges }) {
               rows={3}
               value={selectedNode.data.description || ""}
               onChange={(e) => updateNodeData("description", e.target.value)}
+              onBlur={handleBlur}
               className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 resize-none text-gray-600 leading-relaxed"
             />
           </div>

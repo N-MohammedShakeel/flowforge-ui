@@ -1,3 +1,4 @@
+// src/components/canvas/CanvasFlow.jsx
 import React, { useCallback } from "react";
 import ReactFlow, { Background, Controls, MiniMap } from "reactflow";
 import "reactflow/dist/style.css";
@@ -14,6 +15,7 @@ const defaultEdgeOptions = {
 };
 
 const minimapColor = (node) => {
+  if (!node?.data) return "#6b7280";
   switch (node.data.category) {
     case "frontend":
       return "#2563eb";
@@ -69,12 +71,10 @@ const CanvasFlow = ({
       deleteKeyCode={["Delete", "Backspace"]}
       multiSelectionKeyCode="Shift"
       selectionKeyCode="Shift"
-      panOnScroll
-      selectionOnDrag
       elevateNodesOnSelect
       proOptions={{ hideAttribution: true }}
     >
-      <Controls position="bottom-right" showInteractive={true} />
+      <Controls position="bottom-left" showInteractive={false} />
       <MiniMap pannable zoomable nodeColor={minimapColor} nodeStrokeWidth={3} />
       <Background gap={20} size={1.2} color="#d1d5db" />
     </ReactFlow>

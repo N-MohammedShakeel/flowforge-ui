@@ -67,3 +67,38 @@ body {
 .subheading {
   @apply text-xl font-medium text-gray-800;
 }
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes dash_reverse {
+  to {
+    stroke-dashoffset: 100;
+  }
+}
+
+@keyframes fade_in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-\\[dash_20s_linear_infinite\\] {
+  animation: dash 20s linear infinite;
+}
+
+.animate-\\[dash_20s_linear_infinite_reverse\\] {
+  animation: dash_reverse 20s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade_in 0.3s ease-out forwards;
+}

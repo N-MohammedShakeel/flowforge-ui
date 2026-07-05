@@ -1,3 +1,4 @@
+// src/components/canvas/CanvasEditor.jsx
 import React from "react";
 import { useNodesState, useEdgesState } from "reactflow";
 import CanvasFlow from "./CanvasFlow";

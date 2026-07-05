@@ -1,3 +1,4 @@
+// src/components/canvas/sidebar/EdgeProperties.jsx
 import React from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 

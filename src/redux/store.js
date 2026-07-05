@@ -1,9 +1,10 @@
+// src/redux/store.js
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
 import projectReducer from "./slices/projectSlice";
 import canvasReducer from "./slices/canvasSlice";
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     auth: authReducer,
     projects: projectReducer,
@@ -11,7 +12,8 @@ const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Useful for React Flow objects
+      // React Flow node/edge objects are not serializable (contain functions)
+      serializableCheck: false,
     }),
 });
 

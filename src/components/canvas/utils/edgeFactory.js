@@ -1,3 +1,4 @@
+// src/components/canvas/utils/edgeFactory.js
 export const createEdge = (params) => ({
   ...params,
   id: `edge-${Date.now()}`,

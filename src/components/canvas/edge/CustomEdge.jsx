@@ -1,3 +1,4 @@
+// src/components/canvas/edge/CustomEdge.jsx
 import React, { memo, useMemo } from "react";
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "reactflow";
 

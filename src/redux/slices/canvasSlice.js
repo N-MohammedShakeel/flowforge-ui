@@ -1,3 +1,4 @@
+// src/redux/slices/canvasSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {

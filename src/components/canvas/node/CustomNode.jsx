@@ -1,3 +1,4 @@
+// src/components/canvas/node/CustomNode.jsx
 import React, { memo, useState } from "react";
 import { Handle, Position } from "reactflow";
 import {

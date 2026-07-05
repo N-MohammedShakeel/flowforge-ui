@@ -1,3 +1,4 @@
+// src/redux/thunks/aiThunks.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { aiApi } from "../../services/api";
 import { setNodes, setEdges, setReview } from "../slices/canvasSlice";

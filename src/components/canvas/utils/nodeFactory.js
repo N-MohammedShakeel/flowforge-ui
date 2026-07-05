@@ -1,3 +1,4 @@
+// src/components/canvas/utils/nodeFactory.js
 const randomOffset = () => Math.floor(Math.random() * 150);
 
 export const createNode = (

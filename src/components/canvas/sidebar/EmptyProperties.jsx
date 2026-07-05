@@ -1,3 +1,4 @@
+// src/components/canvas/sidebar/EmptyProperties.jsx
 import React from "react";
 
 export default function EmptyProperties() {
