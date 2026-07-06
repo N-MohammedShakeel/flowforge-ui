@@ -18,9 +18,9 @@ export default function TopToolbar({
   onSave,
   isSaving = false,
   onExport,
-  onReview,
+  onOpenReviewModal,
   isReviewing = false,
-  onEnhance,
+  onOpenEnhanceModal,
   isEnhancing = false,
 }) {
   return (
@@ -75,7 +75,7 @@ export default function TopToolbar({
       {/* Right Section: Core AI Workspace Agent Tools */}
       <div className="flex items-center gap-3">
         <button
-          onClick={onReview}
+          onClick={onOpenReviewModal}
           disabled={isReviewing}
           className="px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl font-semibold text-sm shadow-sm transition flex items-center gap-2 cursor-pointer"
         >
@@ -86,7 +86,7 @@ export default function TopToolbar({
         </button>
 
         <button
-          onClick={onEnhance}
+          onClick={onOpenEnhanceModal}
           disabled={isEnhancing}
           className="px-5 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl font-semibold text-sm shadow-sm transition flex items-center gap-2 cursor-pointer"
         >

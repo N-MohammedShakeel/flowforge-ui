@@ -127,6 +127,10 @@ export const projectApi = {
   saveCanvas: (id, canvasData) =>
     api.post(`/projects/${id}/canvas`, canvasData),
   loadCanvas: (id) => api.get(`/projects/${id}/canvas`),
+  saveReview: (id, reviewData) => api.post(`/projects/${id}/review`, reviewData),
+  getVersions: (id) => api.get(`/projects/${id}/canvas/versions`),
+  createVersion: (id, canvasData) => api.post(`/projects/${id}/canvas/versions`, canvasData),
+  loadVersion: (id, version) => api.get(`/projects/${id}/canvas/versions/${version}`),
 };
 
 // ===== AI Endpoints (via Spring Boot gateway) =====

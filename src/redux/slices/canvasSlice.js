@@ -6,6 +6,8 @@ const initialState = {
   edges: [],
   selectedNode: null,
   review: null,
+  version: 0,
+  versions: [],
   isLoading: false,
   error: null,
 };
@@ -29,6 +31,12 @@ const canvasSlice = createSlice({
     setReview: (state, action) => {
       state.review = action.payload;
     },
+    setVersion: (state, action) => {
+      state.version = action.payload;
+    },
+    setVersions: (state, action) => {
+      state.versions = action.payload;
+    },
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
@@ -48,6 +56,8 @@ export const {
   setEdges,
   updateNode,
   setReview,
+  setVersion,
+  setVersions,
   setLoading,
   setError,
   resetCanvas,

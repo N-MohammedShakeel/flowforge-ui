@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
   const [error, setError] = useState("");
+  const [outOfContextWarning, setOutOfContextWarning] = useState("");
   const [srsFileName, setSrsFileName] = useState("");
   const [zipFileName, setZipFileName] = useState("");
   const srsFileRef = useRef(null);
@@ -44,6 +45,7 @@ const Dashboard = () => {
 
     setError("");
     setIsGenerating(true);
+    let newProjectId = null;
 
     try {
       // Step 1: Create project to get a real ID
@@ -54,7 +56,7 @@ const Dashboard = () => {
         }),
       ).unwrap();
 
-      const newProjectId = projectResult.id;
+      newProjectId = projectResult.id;
 
       let srsFilePath = null;
       let projectZipPath = null;
@@ -105,11 +107,20 @@ const Dashboard = () => {
       navigate(`/canvas/${newProjectId}`);
     } catch (err) {
       setUploadProgress(null);
-      const message =
-        err?.message ||
-        err?.response?.data?.message ||
-        "Generation failed. Please try again.";
-      setError(message);
+      if (err?.response?.data?.details === "OUT_OF_CONTEXT") {
+        setOutOfContextWarning(err.response.data.message);
+        if (newProjectId) {
+          projectApi.delete(newProjectId).catch((e) => 
+            console.error("Failed to cleanup draft project", e)
+          );
+        }
+      } else {
+        const message =
+          err?.message ||
+          err?.response?.data?.message ||
+          "Generation failed. Please try again.";
+        setError(message);
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -423,6 +434,43 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Out of Context Warning Modal */}
+      {outOfContextWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-fade-in border border-amber-100">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-2xl">🚧</span>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">
+                  Out of Context
+                </h3>
+                <p className="text-sm text-gray-500">
+                  AI Guardrail Warning
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-amber-50 rounded-xl p-4 mb-6 border border-amber-100">
+              <p className="text-sm text-amber-800 leading-relaxed font-medium">
+                {outOfContextWarning}
+              </p>
+            </div>
+            
+            <button
+              onClick={() => {
+                setOutOfContextWarning("");
+                setDescription("");
+              }}
+              className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition-colors shadow-sm text-sm"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

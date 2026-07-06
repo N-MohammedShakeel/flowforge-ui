@@ -20,6 +20,8 @@ import NodeProperties from "../components/canvas/sidebar/NodeProperties";
 import EdgeProperties from "../components/canvas/sidebar/EdgeProperties";
 import EmptyProperties from "../components/canvas/sidebar/EmptyProperties";
 import TopToolbar from "../components/canvas/toolbar/TopToolbar";
+import ReviewModal from "../components/canvas/toolbar/ReviewModal";
+import EnhancementModal from "../components/canvas/toolbar/EnhancementModal";
 import { createNode } from "../components/canvas/utils/nodeFactory";
 import {
   aiToReactFlow,
@@ -27,6 +29,13 @@ import {
 } from "../components/canvas/utils/aiTransformer";
 import { aiApi, projectApi } from "../services/api";
 import { setCurrentProject } from "../redux/slices/projectSlice";
+import {
+  setNodes,
+  setEdges,
+  setReview,
+  setVersion,
+  setVersions,
+} from "../redux/slices/canvasSlice";
 
 // ===== Inline Toast Notification =====
 const TOAST_DURATION = 4000;
@@ -92,123 +101,6 @@ const ToastContainer = ({ toasts }) => {
   );
 };
 
-// ===== Review Panel (shown when review results exist) =====
-const ReviewPanel = ({ review, onClose }) => {
-  if (!review) return null;
-
-  const ScoreBar = ({ label, value }) => (
-    <div className="mb-3">
-      <div className="flex justify-between text-xs mb-1">
-        <span className="text-gray-600 font-medium">{label}</span>
-        <span
-          className={`font-bold ${value >= 70 ? "text-emerald-600" : value >= 50 ? "text-amber-500" : "text-red-600"}`}
-        >
-          {value}/100
-        </span>
-      </div>
-      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-500 ${value >= 70 ? "bg-emerald-500" : value >= 50 ? "bg-amber-400" : "bg-red-500"}`}
-          style={{ width: `${value}%` }}
-        />
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="absolute right-0 top-0 h-full w-80 bg-white/95 backdrop-blur-sm border-l border-gray-200 z-30 flex flex-col shadow-2xl shadow-gray-300/30 overflow-y-auto animate-in slide-in-from-right duration-200">
-      <div className="p-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
-        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-          <span className="text-indigo-500">🔍</span>
-          Architecture Review
-        </h3>
-        <button
-          onClick={onClose}
-          className="p-1 hover:bg-gray-100 rounded-lg transition"
-        >
-          <svg
-            className="w-4 h-4 text-gray-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <div className="p-4 flex-1">
-        {/* Overall Score */}
-        <div className="text-center mb-5 p-4 bg-gradient-to-br from-gray-50 to-indigo-50/40 rounded-xl border border-gray-100">
-          <div
-            className={`text-4xl font-bold mb-1 ${review.overall_score >= 70 ? "text-emerald-600" : review.overall_score >= 50 ? "text-amber-500" : "text-red-600"}`}
-          >
-            {review.overall_score}
-          </div>
-          <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">
-            Overall Score
-          </div>
-        </div>
-
-        {/* Dimension Scores */}
-        <div className="mb-5">
-          <ScoreBar label="Architecture" value={review.architecture_score} />
-          <ScoreBar label="Scalability" value={review.scalability} />
-          <ScoreBar label="Maintainability" value={review.maintainability} />
-          <ScoreBar label="Security" value={review.security} />
-        </div>
-
-        {/* Issues */}
-        {review.issues?.length > 0 && (
-          <div className="mb-4">
-            <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
-              Issues
-            </h4>
-            <ul className="space-y-1.5">
-              {review.issues.map((issue, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-xs text-gray-600 bg-red-50/60 border border-red-100 rounded-lg px-2.5 py-2"
-                >
-                  <span className="text-red-500 mt-0.5 flex-shrink-0">⚠</span>
-                  {issue}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Suggestions */}
-        {review.suggestions?.length > 0 && (
-          <div>
-            <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
-              Suggestions
-            </h4>
-            <ul className="space-y-1.5">
-              {review.suggestions.map((s, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-xs text-gray-600 bg-indigo-50/60 border border-indigo-100 rounded-lg px-2.5 py-2"
-                >
-                  <span className="text-indigo-500 mt-0.5 flex-shrink-0">
-                    →
-                  </span>
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 // ===== Main Canvas Editor =====
 function CanvasEditorContent() {
   const { projectId } = useParams();
@@ -225,13 +117,19 @@ function CanvasEditorContent() {
   });
   const { screenToFlowPosition } = useReactFlow();
 
+  const review = useSelector((state) => state.canvas.review);
+  const version = useSelector((state) => state.canvas.version);
+  const versions = useSelector((state) => state.canvas.versions);
+
   // Action States
   const [isReviewing, setIsReviewing] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingCanvas, setIsLoadingCanvas] = useState(true);
-  const [review, setReview] = useState(null);
-  const [showReview, setShowReview] = useState(false);
+
+  // Modal State
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isEnhanceModalOpen, setIsEnhanceModalOpen] = useState(false);
 
   // Undo/Redo History
   const [history, setHistory] = useState([]);
@@ -262,7 +160,6 @@ function CanvasEditorContent() {
         const {
           nodes: savedNodes = [],
           edges: savedEdges = [],
-          review: savedReview = null,
         } = canvasRes.data;
 
         if (savedNodes.length > 0) {
@@ -274,10 +171,28 @@ function CanvasEditorContent() {
           setNodes(state.nodes);
           setEdges(state.edges);
           pushToHistory(state.nodes, state.edges);
+        } else {
+          setNodes([]);
+          setEdges([]);
+          pushToHistory([], []);
         }
 
-        if (savedReview) {
-          setReview(savedReview);
+        if (projectRes.data.latestReview) {
+          dispatch(setReview(projectRes.data.latestReview));
+        } else {
+          dispatch(setReview(null));
+        }
+
+        try {
+          const versionRes = await projectApi.getVersions(projectId);
+          const fetchedVersions = versionRes.data || [];
+          dispatch(setVersions(fetchedVersions));
+          // Set current version to the latest (max) version, or 0 if no versions yet
+          const latestVersion = fetchedVersions.length > 0 ? Math.max(...fetchedVersions) : 0;
+          dispatch(setVersion(latestVersion));
+        } catch (e) {
+          console.error("Failed to load versions", e);
+          dispatch(setVersion(0));
         }
       } catch (error) {
         if (error.response?.status === 404) {
@@ -312,17 +227,15 @@ function CanvasEditorContent() {
       clearTimeout(autoSaveTimer.current);
       autoSaveTimer.current = setTimeout(async () => {
         try {
-          // Review is obtained from the outer scope, which could be slightly stale in useCallback
-          // but since we only care about saving the latest review it's acceptable.
           await projectApi.saveCanvas(projectId, {
             nodes: currentNodes,
             edges: currentEdges,
             review,
           });
         } catch {
-          // Silent auto-save failure — don't toast the user on every keystroke failure
+          // Silent auto-save failure
         }
-      }, 3000); // 3-second debounce
+      }, 3000);
     },
     [projectId, review],
   );
@@ -480,10 +393,8 @@ function CanvasEditorContent() {
     try {
       const aiData = reactFlowToAi(nodes, edges);
 
-      console.log("Sending review request with projectId:", projectId); // ← Debug
-
       const response = await aiApi.review({
-        projectId: projectId, // Make sure this is a string
+        projectId: projectId,
         nodes: aiData.nodes,
         edges: aiData.edges,
       });
@@ -491,15 +402,10 @@ function CanvasEditorContent() {
       const reviewData = response.data?.state?.review || response.data?.review;
 
       if (reviewData) {
-        setReview(reviewData);
-        setShowReview(true);
+        dispatch(setReview(reviewData));
         toast("Review complete!", "success");
 
-        await projectApi.saveCanvas(projectId, {
-          nodes,
-          edges,
-          review: reviewData,
-        });
+        await projectApi.saveReview(projectId, reviewData);
       } else {
         toast("Review returned no data", "warning");
       }
@@ -534,8 +440,23 @@ function CanvasEditorContent() {
         setNodes(transformedState.nodes);
         setEdges(transformedState.edges);
         pushToHistory(transformedState.nodes, transformedState.edges);
-        triggerAutoSave(transformedState.nodes, transformedState.edges);
+        
+        // Create an explicit version snapshot in the DB (CanvasState table)
+        await projectApi.createVersion(projectId, {
+          nodes: transformedState.nodes,
+          edges: transformedState.edges,
+        });
+        
         toast("Architecture enhanced!", "success");
+        
+        // Refresh versions after enhancement
+        const versionRes = await projectApi.getVersions(projectId);
+        const updatedVersions = versionRes.data || [];
+        dispatch(setVersions(updatedVersions));
+        
+        if (updatedVersions.length > 0) {
+          dispatch(setVersion(Math.max(...updatedVersions)));
+        }
       } else {
         toast("Enhancement returned no changes", "warning");
       }
@@ -544,6 +465,46 @@ function CanvasEditorContent() {
     } finally {
       setIsEnhancing(false);
       setLoadingMessage("");
+      setIsEnhanceModalOpen(false);
+    }
+  };
+
+  const handleLoadVersion = async (targetVersion) => {
+    try {
+      setIsLoadingCanvas(true);
+      const res = await projectApi.loadVersion(projectId, targetVersion);
+      const canvasData = res.data;
+      if (canvasData) {
+        const transformedState = aiToReactFlow({
+          nodes: canvasData.nodes || [],
+          edges: canvasData.edges || [],
+        });
+        setNodes(transformedState.nodes);
+        setEdges(transformedState.edges);
+        pushToHistory(transformedState.nodes, transformedState.edges);
+        
+        if (canvasData.version) {
+          dispatch(setVersion(canvasData.version));
+        }
+      }
+      
+      // Fetch project metadata to get latest review and versions
+      const projectRes = await projectApi.getById(projectId);
+      if (projectRes.data.latestReview) {
+        dispatch(setReview(projectRes.data.latestReview));
+      }
+      
+      try {
+        const versionRes = await projectApi.getVersions(projectId);
+        dispatch(setVersions(versionRes.data || []));
+      } catch (e) {
+        console.error("Failed to load versions", e);
+      }
+      toast(`Loaded version ${targetVersion}`, "success");
+    } catch (e) {
+      toast("Failed to load version", "error");
+    } finally {
+      setIsLoadingCanvas(false);
     }
   };
 
@@ -595,8 +556,27 @@ function CanvasEditorContent() {
         onSave={handleSave}
         isSaving={isSaving}
         onExport={handleExportJSON}
-        onReview={handleReview}
+        onOpenReviewModal={() => setIsReviewModalOpen(true)}
         isReviewing={isReviewing}
+        onOpenEnhanceModal={() => setIsEnhanceModalOpen(true)}
+        isEnhancing={isEnhancing}
+      />
+
+      <ReviewModal 
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        latestReview={review}
+        onGenerateReview={handleReview}
+        isGenerating={isReviewing}
+      />
+
+      <EnhancementModal
+        isOpen={isEnhanceModalOpen}
+        onClose={() => setIsEnhanceModalOpen(false)}
+        currentVersion={version}
+        totalVersions={versions.length > 0 ? Math.max(...versions) : 0}
+        onPreviousVersion={() => handleLoadVersion(version - 1)}
+        onNextVersion={() => handleLoadVersion(version + 1)}
         onEnhance={handleEnhance}
         isEnhancing={isEnhancing}
       />
@@ -618,11 +598,6 @@ function CanvasEditorContent() {
             onNodesChange={onNodesChangeWithTracking}
             onEdgesChange={onEdgesChangeWithTracking}
           />
-
-          {/* Review Panel (overlays canvas from right) */}
-          {showReview && (
-            <ReviewPanel review={review} onClose={() => setShowReview(false)} />
-          )}
         </div>
 
         {/* Right — Properties Panel */}
