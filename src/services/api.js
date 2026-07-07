@@ -7,7 +7,7 @@ export const injectStore = (store) => {
   injectedStore = store;
 };
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
 
 /**
  * Primary axios instance — routes all calls through Spring Boot.
@@ -19,6 +19,7 @@ const api = axios.create({
   timeout: 120000, // 2 minutes — AI calls can be slow
   headers: {
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "69420",
   },
 });
 
